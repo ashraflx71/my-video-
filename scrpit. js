@@ -1,36 +1,55 @@
+let mediaRecorder;
+let recordedChunks = [];
 
-const canvas = document.getElementById('videoCanvas');
-const ctx = canvas.getContext('2d');
+// دالة لبدء التسجيل
+function startRecording() {
+    // إيقاف الحركة مؤقتاً؟ لا، نتركها مستمرة.
+    // نحصل على stream من canvas
+    const stream = canvas.captureStream(30); // 30 إطار في الثانية
 
-let animationFrame;
-let count = 0;
+    mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'video/webm; codecs=vp9' // أو 'video/webm'
+    });
 
-// دالة الرسم - هنا بنحرك مستطيل أو نكتب نص متغير
-function draw() {
-    // مسح الشاشة
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // عند توفر بيانات جديدة
+    mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+            recordedChunks.push(event.data);
+        }
+    };
 
-    // خلفية سوداء
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // عند انتهاء التسجيل
+    mediaRecorder.onstop = () => {
+        // تحويل القطع إلى blob
+        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
 
-    // شكل متحرك: مستطيل يتغير لونه مع الزمن
-    ctx.fillStyle = `hsl(${count % 360}, 100%, 50%)`;
-    ctx.fillRect(100 + (count % 200), 100, 100, 100);
+        // إنشاء رابط تحميل
+        const downloadLink = document.getElementById('downloadLink');
+        downloadLink.href = url;
+        downloadLink.download = 'فيديو-من-كانفاس.webm';
+        downloadLink.textContent = 'اضغط لتحميل الفيديو';
 
-    // نص متحرك
-    ctx.font = '30px Arial';
-    ctx.fillStyle = '#fff';
-    ctx.fillText('الوقت: ' + count, 50, 300);
+        // تنظيف الذاكرة بعد فترة
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        recordedChunks = [];
+    };
 
-    count++;
-    animationFrame = requestAnimationFrame(draw);
+    // بدء التسجيل
+    mediaRecorder.start();
+    document.getElementById('recordBtn').disabled = true;
+    document.getElementById('stopBtn').disabled = false;
 }
 
-// بدء الحركة
-draw();
-
-// إيقاف الحركة عند الحاجة
-function stopDrawing() {
-    cancelAnimationFrame(animationFrame);
+// دالة إيقاف التسجيل
+function stopRecording() {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        document.getElementById('recordBtn').disabled = false;
+        document.getElementById('stopBtn').disabled = true;
+    }
 }
+
+// ربط الأزرار
+document.getElementById('recordBtn').addEventListener('click', startRecording);
+document.getElementById('stopBtn').addEventListener('click', stopRecording);
