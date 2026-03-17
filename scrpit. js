@@ -1,1 +1,36 @@
 
+const canvas = document.getElementById('videoCanvas');
+const ctx = canvas.getContext('2d');
+
+let animationFrame;
+let count = 0;
+
+// دالة الرسم - هنا بنحرك مستطيل أو نكتب نص متغير
+function draw() {
+    // مسح الشاشة
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // خلفية سوداء
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // شكل متحرك: مستطيل يتغير لونه مع الزمن
+    ctx.fillStyle = `hsl(${count % 360}, 100%, 50%)`;
+    ctx.fillRect(100 + (count % 200), 100, 100, 100);
+
+    // نص متحرك
+    ctx.font = '30px Arial';
+    ctx.fillStyle = '#fff';
+    ctx.fillText('الوقت: ' + count, 50, 300);
+
+    count++;
+    animationFrame = requestAnimationFrame(draw);
+}
+
+// بدء الحركة
+draw();
+
+// إيقاف الحركة عند الحاجة
+function stopDrawing() {
+    cancelAnimationFrame(animationFrame);
+}
