@@ -19,4 +19,7 @@
 
     <script src="script.js"></script>
 </body>
-</html>
+</html>const userText = document.getElementById('userText').value || 'مرحبا';
+const textColor = document.getElementById('textColor').value;
+ctx.fillStyle = textColor;
+ctx.fillText(userText, 50, 300);
