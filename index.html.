@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head>
+<head><input type="text" id="userText" placeholder="اكتب نصك" />
+<input type="color" id="textColor" value="#ffffff" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مولد الفيديو PWA</title>
