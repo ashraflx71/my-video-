@@ -88,3 +88,4 @@ function stopRecording() {
 // ربط الأزرار
 document.getElementById('recordBtn').addEventListener('click', startRecording);
 document.getElementById('stopBtn').addEventListener('click', stopRecording);
+const ctx = canvas.getContext('2d', { preserveDrawingBuffer: true });
